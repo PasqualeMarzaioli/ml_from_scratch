@@ -1,0 +1,17 @@
+# .gitignore — Excludes local environments, caches, and generated noise.
+# It keeps source files and intentional outputs visible in version control.
+# Author: Pasquale Marzaioli
+
+.cache/
+.matplotlib/
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+*.pyc
+__pycache__/
+build/
+coverage.xml
+dist/
+htmlcov/
+plots/

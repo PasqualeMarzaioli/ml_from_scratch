@@ -19,7 +19,11 @@ def main() -> None:
 
     from ml_from_scratch.linear_regression import LinearRegressionGD
     from ml_from_scratch.metrics import mean_squared_error
-    from ml_from_scratch.plotting import plot_loss_curve, plot_regression_fit
+    from ml_from_scratch.plotting import (
+        plot_loss_curve,
+        plot_loss_curve_zoom,
+        plot_regression_fit,
+    )
     from ml_from_scratch.preprocessing import train_test_split
 
     rng = np.random.default_rng(7)
@@ -51,6 +55,13 @@ def main() -> None:
     loss_ax = plot_loss_curve(model.loss_history_)
     loss_ax.figure.savefig(
         output_dir / "linear_regression_loss.png",
+        dpi=150,
+        bbox_inches="tight",
+    )
+
+    zoom_ax = plot_loss_curve_zoom(model.loss_history_, skip_first=5)
+    zoom_ax.figure.savefig(
+        output_dir / "linear_regression_loss_zoom.png",
         dpi=150,
         bbox_inches="tight",
     )

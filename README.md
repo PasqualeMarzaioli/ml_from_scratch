@@ -93,6 +93,7 @@ This saves:
 
 - `plots/linear_regression_fit.png`
 - `plots/linear_regression_loss.png`
+- `plots/linear_regression_loss_zoom.png`
 
 ## Public API
 

@@ -56,7 +56,7 @@ def plot_loss_curve(
     loss_history: Sequence[float],
     ax: plt.Axes | None = None,
 ) -> plt.Axes:
-    """Plot mean squared error over gradient descent iterations.
+    """Plot mean squared error over gradient descent iterations on a log y-axis.
 
     Args:
         loss_history: Loss values stored during training.
@@ -65,15 +65,64 @@ def plot_loss_curve(
     Returns:
         The Matplotlib axes containing the plot.
     """
-    if len(loss_history) == 0:
+    losses = np.asarray(loss_history, dtype=float)
+
+    if losses.size == 0:
         raise ValueError("loss_history must contain at least one value.")
+    if losses.ndim != 1:
+        raise ValueError("loss_history must be one-dimensional.")
+    if np.any(losses <= 0):
+        raise ValueError("loss_history must contain only positive values.")
 
     if ax is None:
         _, ax = plt.subplots()
 
-    ax.plot(np.arange(1, len(loss_history) + 1), loss_history)
+    # Log scale makes early progress and later convergence visible together.
+    ax.plot(np.arange(1, losses.size + 1), losses)
+    ax.set_yscale("log")
+    ax.set_xlabel("iteration")
+    ax.set_ylabel("mean squared error (log scale)")
+    ax.set_title("Training loss")
+
+    return ax
+
+
+def plot_loss_curve_zoom(
+    loss_history: Sequence[float],
+    skip_first: int = 5,
+    ax: plt.Axes | None = None,
+) -> plt.Axes:
+    """Plot mean squared error after skipping the first training iterations.
+
+    Args:
+        loss_history: Loss values stored during training.
+        skip_first: Number of initial iterations to exclude from the plot.
+        ax: Optional Matplotlib axes to draw on.
+
+    Returns:
+        The Matplotlib axes containing the zoomed plot.
+    """
+    losses = np.asarray(loss_history, dtype=float)
+
+    if losses.size == 0:
+        raise ValueError("loss_history must contain at least one value.")
+    if losses.ndim != 1:
+        raise ValueError("loss_history must be one-dimensional.")
+    if skip_first < 0:
+        raise ValueError("skip_first must be non-negative.")
+    if skip_first >= losses.size:
+        raise ValueError("skip_first must leave at least one loss value to plot.")
+
+    if ax is None:
+        _, ax = plt.subplots()
+
+    # Dropping the first steep updates reveals the smaller convergence changes.
+    iterations = np.arange(skip_first + 1, losses.size + 1)
+    ax.plot(iterations, losses[skip_first:])
+    if iterations.size > 1:
+        ax.set_xlim(iterations[0], iterations[-1])
     ax.set_xlabel("iteration")
     ax.set_ylabel("mean squared error")
-    ax.set_title("Training loss")
+    ax.set_title(f"Training loss after first {skip_first} iterations")
 
     return ax

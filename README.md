@@ -225,6 +225,31 @@ pip install -e ".[dev]"
 pytest
 ```
 
+## Run Educational Notebooks
+
+Install the optional notebook tools only when you want to view or execute the
+walkthroughs:
+
+```bash
+pip install -e ".[notebooks]"
+jupyter lab notebooks
+```
+
+The notebooks are:
+
+- `notebooks/01_linear_regression.ipynb`: linear regression, MSE, gradient
+  descent, normalization, and fit diagnostics.
+- `notebooks/02_logistic_regression.ipynb`: sigmoid probabilities, binary
+  cross-entropy, thresholding, and classification metrics.
+- `notebooks/03_overfitting.ipynb`: polynomial features, underfitting,
+  overfitting, and why test error matters.
+
+To execute one notebook from the terminal:
+
+```bash
+jupyter execute --kernel_name=python3 notebooks/01_linear_regression.ipynb
+```
+
 ## Run Example Scripts
 
 ```bash

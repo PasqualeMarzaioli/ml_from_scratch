@@ -4,11 +4,16 @@
 
 from ml_from_scratch.linear_regression import LinearRegressionGD
 from ml_from_scratch.metrics import mean_squared_error
-from ml_from_scratch.preprocessing import normalize_features, train_test_split
+from ml_from_scratch.preprocessing import (
+    normalize_features,
+    train_test_split,
+    transform_features,
+)
 
 __all__ = [
     "LinearRegressionGD",
     "mean_squared_error",
     "normalize_features",
     "train_test_split",
+    "transform_features",
 ]

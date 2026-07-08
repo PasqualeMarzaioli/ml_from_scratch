@@ -15,6 +15,7 @@ def plot_regression_fit(
     y: np.ndarray,
     model: LinearRegressionGD,
     ax: plt.Axes | None = None,
+    prediction_X: np.ndarray | None = None,
 ) -> plt.Axes:
     """Plot one-feature training data and the fitted regression line.
 
@@ -23,6 +24,7 @@ def plot_regression_fit(
         y: Target vector with shape (n_samples,).
         model: Fitted linear regression model.
         ax: Optional Matplotlib axes to draw on.
+        prediction_X: Optional model input with shape (n_samples, n_features).
 
     Returns:
         The Matplotlib axes containing the plot.
@@ -35,15 +37,27 @@ def plot_regression_fit(
         raise ValueError("plot_regression_fit expects X with shape (n_samples, 1).")
     if y.ndim != 1 or X.shape[0] != y.shape[0]:
         raise ValueError("y must have shape (n_samples,) matching X.")
+    if prediction_X is None:
+        prediction_X = X
+    else:
+        prediction_X = np.asarray(prediction_X, dtype=float)
+        if prediction_X.ndim != 2 or prediction_X.shape[0] != X.shape[0]:
+            raise ValueError("prediction_X must have one row for each row in X.")
 
     if ax is None:
         _, ax = plt.subplots()
 
     sorted_indices = np.argsort(X[:, 0])
     sorted_X = X[sorted_indices]
+    sorted_prediction_X = prediction_X[sorted_indices]
 
     ax.scatter(X[:, 0], y, label="data", alpha=0.75)
-    ax.plot(sorted_X[:, 0], model.predict(sorted_X), color="tab:red", label="model")
+    ax.plot(
+        sorted_X[:, 0],
+        model.predict(sorted_prediction_X),
+        color="tab:red",
+        label="model",
+    )
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Linear regression fit")

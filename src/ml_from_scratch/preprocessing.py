@@ -27,7 +27,38 @@ def normalize_features(X: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarra
 
     # Constant features cannot be divided by zero, so they become all zeros.
     scales = np.where(scales == 0, 1.0, scales)
-    return (X - means) / scales, means, scales
+    return transform_features(X, means, scales), means, scales
+
+
+def transform_features(
+    X: np.ndarray,
+    means: np.ndarray,
+    scales: np.ndarray,
+) -> np.ndarray:
+    """Normalize features with precomputed training means and scales.
+
+    Args:
+        X: Feature matrix with shape (n_samples, n_features).
+        means: Training feature means with shape (n_features,).
+        scales: Training feature scales with shape (n_features,).
+
+    Returns:
+        Normalized feature matrix with shape (n_samples, n_features).
+    """
+    X = np.asarray(X, dtype=float)
+    means = np.asarray(means, dtype=float)
+    scales = np.asarray(scales, dtype=float)
+
+    if X.ndim != 2:
+        raise ValueError("X must have shape (n_samples, n_features).")
+    if means.ndim != 1 or scales.ndim != 1:
+        raise ValueError("means and scales must both have shape (n_features,).")
+    if X.shape[1] != means.shape[0] or means.shape != scales.shape:
+        raise ValueError("X, means, and scales must describe the same features.")
+    if np.any(scales == 0):
+        raise ValueError("scales must not contain zero values.")
+
+    return (X - means) / scales
 
 
 def train_test_split(

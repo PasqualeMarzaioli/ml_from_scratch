@@ -24,7 +24,11 @@ def main() -> None:
         plot_loss_curve_zoom,
         plot_regression_fit,
     )
-    from ml_from_scratch.preprocessing import train_test_split
+    from ml_from_scratch.preprocessing import (
+        normalize_features,
+        train_test_split,
+        transform_features,
+    )
 
     rng = np.random.default_rng(7)
     X = np.linspace(0, 10, 80).reshape(-1, 1)
@@ -38,14 +42,22 @@ def main() -> None:
         random_state=7,
     )
 
+    X_train_normalized, means, scales = normalize_features(X_train)
+    X_test_normalized = transform_features(X_test, means, scales)
+
     model = LinearRegressionGD(learning_rate=0.01, n_iterations=1000)
-    model.fit(X_train, y_train)
+    model.fit(X_train_normalized, y_train)
 
     output_dir = Path("plots")
     output_dir.mkdir(exist_ok=True)
 
     # Save one plot for the fitted line and one for optimization progress.
-    fit_ax = plot_regression_fit(X_train, y_train, model)
+    fit_ax = plot_regression_fit(
+        X_train,
+        y_train,
+        model,
+        prediction_X=X_train_normalized,
+    )
     fit_ax.figure.savefig(
         output_dir / "linear_regression_fit.png",
         dpi=150,
@@ -66,9 +78,13 @@ def main() -> None:
         bbox_inches="tight",
     )
 
-    test_mse = mean_squared_error(y_test, model.predict(X_test))
-    print(f"weight: {model.weights_[0]:.3f}")
-    print(f"bias: {model.bias_:.3f}")
+    # Convert normalized-space parameters back to the original x scale for display.
+    raw_weights = model.weights_ / scales
+    raw_bias = model.bias_ - float(np.sum(model.weights_ * means / scales))
+
+    test_mse = mean_squared_error(y_test, model.predict(X_test_normalized))
+    print(f"raw-scale weight: {raw_weights[0]:.3f}")
+    print(f"raw-scale bias: {raw_bias:.3f}")
     print(f"test MSE: {test_mse:.3f}")
     print(f"saved plots to: {output_dir}")
 

@@ -115,17 +115,18 @@ This saves:
 import numpy as np
 
 from ml_from_scratch import LinearRegressionGD
-from ml_from_scratch.preprocessing import normalize_features
+from ml_from_scratch.preprocessing import normalize_features, transform_features
 
 X = np.array([[0.0], [1.0], [2.0]])
 y = np.array([1.0, 3.0, 5.0])
 
 X_normalized, means, scales = normalize_features(X)
+new_X_normalized = transform_features(np.array([[3.0]]), means, scales)
 
 model = LinearRegressionGD(learning_rate=0.1, n_iterations=100)
 model.fit(X_normalized, y)
 
-predictions = model.predict(X_normalized)
+predictions = model.predict(new_X_normalized)
 ```
 
 ## What This Project Does Not Cover Yet

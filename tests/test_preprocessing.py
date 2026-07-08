@@ -5,7 +5,11 @@
 import numpy as np
 import pytest
 
-from ml_from_scratch.preprocessing import normalize_features, train_test_split
+from ml_from_scratch.preprocessing import (
+    normalize_features,
+    train_test_split,
+    transform_features,
+)
 
 
 def test_normalize_features_returns_zero_mean_unit_std_columns() -> None:
@@ -32,6 +36,23 @@ def test_normalize_features_handles_constant_columns() -> None:
 def test_normalize_features_rejects_non_matrix_input() -> None:
     with pytest.raises(ValueError, match="n_samples"):
         normalize_features(np.array([1.0, 2.0, 3.0]))
+
+
+def test_transform_features_reuses_training_statistics() -> None:
+    X_train = np.array([[0.0], [10.0]])
+    X_test = np.array([[5.0], [15.0]])
+
+    _, means, scales = normalize_features(X_train)
+
+    assert np.allclose(
+        transform_features(X_test, means, scales),
+        np.array([[0.0], [2.0]]),
+    )
+
+
+def test_transform_features_rejects_zero_scales() -> None:
+    with pytest.raises(ValueError, match="zero"):
+        transform_features(np.array([[1.0]]), np.array([0.0]), np.array([0.0]))
 
 
 def test_train_test_split_returns_expected_sizes() -> None:

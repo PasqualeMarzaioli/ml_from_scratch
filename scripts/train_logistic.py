@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
+from ml_from_scratch.datasets import make_binary_classification_data
 from ml_from_scratch.logistic_regression import LogisticRegressionGD
 from ml_from_scratch.metrics import f1_score, precision_score, recall_score
 from ml_from_scratch.preprocessing import (
@@ -32,9 +33,12 @@ def main() -> None:
         plot_logistic_regression_fit,
     )
 
-    rng = np.random.default_rng(19)
-    X = np.linspace(-4, 4, 120).reshape(-1, 1)
-    y = (X[:, 0] + rng.normal(0, 0.6, size=X.shape[0]) >= 0).astype(int)
+    X, y = make_binary_classification_data(
+        n_samples=120,
+        weights=np.array([1.0]),
+        noise=0.6,
+        random_state=19,
+    )
 
     # Split before normalization so test data stays unseen during preprocessing.
     X_train, X_test, y_train, y_test = train_test_split(

@@ -17,6 +17,7 @@ def main() -> None:
     # Import plotting after cache setup so Matplotlib works in locked-down shells.
     import numpy as np
 
+    from ml_from_scratch.datasets import make_polynomial_regression_data
     from ml_from_scratch.linear_regression import LinearRegressionGD
     from ml_from_scratch.metrics import mean_squared_error
     from ml_from_scratch.plotting import (
@@ -31,10 +32,14 @@ def main() -> None:
         transform_features,
     )
 
-    rng = np.random.default_rng(11)
     degree = 2
-    X = np.linspace(-3, 3, 120).reshape(-1, 1)
-    y = 1 - 2 * X[:, 0] + 0.5 * X[:, 0] ** 2 + rng.normal(0, 0.6, X.shape[0])
+    X, y = make_polynomial_regression_data(
+        n_samples=120,
+        degree=degree,
+        coefficients=np.array([1.0, -2.0, 0.5]),
+        noise=0.6,
+        random_state=11,
+    )
 
     # Split raw x values first, then apply the same feature expansion to each split.
     X_train, X_test, y_train, y_test = train_test_split(

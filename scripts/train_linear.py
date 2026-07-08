@@ -17,6 +17,7 @@ def main() -> None:
     # Import plotting after cache setup so Matplotlib works in locked-down shells.
     import numpy as np
 
+    from ml_from_scratch.datasets import make_regression_data
     from ml_from_scratch.linear_regression import LinearRegressionGD
     from ml_from_scratch.metrics import mean_squared_error
     from ml_from_scratch.plotting import (
@@ -30,9 +31,13 @@ def main() -> None:
         transform_features,
     )
 
-    rng = np.random.default_rng(7)
-    X = np.linspace(0, 10, 80).reshape(-1, 1)
-    y = 3 * X[:, 0] + 2 + rng.normal(0, 1, size=X.shape[0])
+    X, y = make_regression_data(
+        n_samples=80,
+        weights=np.array([3.0]),
+        bias=2.0,
+        noise=1.0,
+        random_state=7,
+    )
 
     # Split before training so the printed error estimates unseen data behavior.
     X_train, X_test, y_train, y_test = train_test_split(

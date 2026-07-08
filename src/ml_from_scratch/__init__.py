@@ -2,6 +2,11 @@
 # It imports only the educational building blocks implemented so far.
 # Author: Pasquale Marzaioli
 
+from ml_from_scratch.datasets import (
+    make_binary_classification_data,
+    make_polynomial_regression_data,
+    make_regression_data,
+)
 from ml_from_scratch.linear_regression import LinearRegressionGD
 from ml_from_scratch.logistic_regression import (
     LogisticRegressionGD,
@@ -28,6 +33,9 @@ __all__ = [
     "accuracy_score",
     "binary_cross_entropy_loss",
     "f1_score",
+    "make_binary_classification_data",
+    "make_polynomial_regression_data",
+    "make_regression_data",
     "mean_squared_error",
     "normalize_features",
     "polynomial_features",

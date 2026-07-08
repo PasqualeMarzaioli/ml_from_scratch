@@ -5,12 +5,60 @@ Author: Pasquale Marzaioli
 
 # ML From Scratch
 
-`ml_from_scratch` is a small educational Python package for learning supervised
+`ml_from_scratch` is a small educational Python package for learning
 machine learning by implementing the core ideas directly with NumPy.
 
 This version implements linear regression and logistic regression trained with
 batch gradient descent, plus polynomial feature expansion for curved
 one-feature examples.
+
+## Synthetic Datasets
+
+Synthetic datasets make examples repeatable and easy to inspect because the
+true pattern is known before training. The `random_state` argument fixes the
+NumPy generator seed, so features, generated weights, and noise are the same
+each time the example runs.
+
+```python
+import numpy as np
+
+from ml_from_scratch import make_regression_data
+
+X, y = make_regression_data(
+    n_samples=100,
+    weights=np.array([3.0]),
+    bias=2.0,
+    noise=1.0,
+    random_state=7,
+)
+```
+
+```python
+import numpy as np
+
+from ml_from_scratch import make_binary_classification_data
+
+X, y = make_binary_classification_data(
+    n_samples=100,
+    weights=np.array([1.0]),
+    noise=0.5,
+    random_state=19,
+)
+```
+
+```python
+import numpy as np
+
+from ml_from_scratch import make_polynomial_regression_data
+
+X, y = make_polynomial_regression_data(
+    n_samples=120,
+    degree=2,
+    coefficients=np.array([1.0, -2.0, 0.5]),
+    noise=0.6,
+    random_state=11,
+)
+```
 
 ## What Linear Regression Learns
 
@@ -209,6 +257,9 @@ from ml_from_scratch import (
     LogisticRegressionGD,
     accuracy_score,
     f1_score,
+    make_binary_classification_data,
+    make_polynomial_regression_data,
+    make_regression_data,
     precision_score,
     recall_score,
 )

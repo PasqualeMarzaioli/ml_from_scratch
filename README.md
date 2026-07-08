@@ -247,6 +247,27 @@ The example scripts save:
 The logistic script also prints final binary cross-entropy loss, train accuracy,
 test accuracy, test precision, test recall, and test F1.
 
+## Compare With Scikit-Learn
+
+Scikit-learn is used only in `scripts/compare_sklearn.py` so the core
+from-scratch implementations stay focused on learning the math. Install the
+optional comparison dependency before running the script:
+
+```bash
+pip install -e ".[comparison]"
+python scripts/compare_sklearn.py
+```
+
+The comparison script trains from-scratch and scikit-learn models on the same
+synthetic datasets, train/test splits, and normalized features. Small numeric
+differences are expected because gradient descent, closed-form solvers,
+regularization, and library defaults do not all match exactly. For logistic
+regression, scikit-learn regularization is disabled so probabilities and
+coefficients are more directly comparable.
+
+The script also saves a parity plot to `plots/sklearn_comparison.png`. Points
+near the diagonal mean the from-scratch and scikit-learn outputs agree.
+
 ## Public API
 
 ```python
@@ -301,4 +322,3 @@ f1 = f1_score(classifier_y, labels)
 
 - multi-class classification
 - advanced classification metrics such as ROC curves
-- scikit-learn comparison scripts

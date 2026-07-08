@@ -184,6 +184,64 @@ def plot_logistic_regression_fit(
     return ax
 
 
+def plot_model_agreement(
+    sklearn_values: np.ndarray,
+    scratch_values: np.ndarray,
+    title: str,
+    value_label: str = "prediction",
+    ax: plt.Axes | None = None,
+) -> plt.Axes:
+    """Plot scikit-learn values against from-scratch values.
+
+    Args:
+        sklearn_values: Reference values with shape (n_samples,).
+        scratch_values: From-scratch values with shape (n_samples,).
+        title: Plot title describing the compared model.
+        value_label: Name used in the x-axis and y-axis labels.
+        ax: Optional Matplotlib axes to draw on.
+
+    Returns:
+        The Matplotlib axes containing the parity plot.
+    """
+    sklearn_values = np.asarray(sklearn_values, dtype=float)
+    scratch_values = np.asarray(scratch_values, dtype=float)
+
+    if sklearn_values.ndim != 1 or scratch_values.ndim != 1:
+        raise ValueError("sklearn_values and scratch_values must be one-dimensional.")
+    if sklearn_values.shape != scratch_values.shape:
+        raise ValueError("sklearn_values and scratch_values must have the same shape.")
+    if sklearn_values.size == 0:
+        raise ValueError("values must contain at least one sample.")
+
+    if ax is None:
+        _, ax = plt.subplots()
+
+    # The diagonal is perfect agreement; distance from it shows model mismatch.
+    value_min = float(min(np.min(sklearn_values), np.min(scratch_values)))
+    value_max = float(max(np.max(sklearn_values), np.max(scratch_values)))
+    if value_min == value_max:
+        value_min -= 1.0
+        value_max += 1.0
+
+    ax.scatter(sklearn_values, scratch_values, alpha=0.75, label="samples")
+    ax.plot(
+        [value_min, value_max],
+        [value_min, value_max],
+        color="tab:red",
+        linestyle="--",
+        label="perfect agreement",
+    )
+    ax.set_xlim(value_min, value_max)
+    ax.set_ylim(value_min, value_max)
+    ax.set_aspect("equal", adjustable="box")
+    ax.set_xlabel(f"scikit-learn {value_label}")
+    ax.set_ylabel(f"from-scratch {value_label}")
+    ax.set_title(title)
+    ax.legend()
+
+    return ax
+
+
 def plot_loss_curve_zoom(
     loss_history: Sequence[float],
     skip_first: int = 5,

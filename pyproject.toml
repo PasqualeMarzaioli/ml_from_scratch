@@ -19,6 +19,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+comparison = [
+    "scikit-learn==1.9.0",
+]
 dev = [
     "pytest==8.4.1",
     "ruff==0.12.2",

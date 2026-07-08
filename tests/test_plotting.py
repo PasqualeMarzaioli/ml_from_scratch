@@ -16,6 +16,7 @@ from ml_from_scratch.plotting import (
     plot_logistic_regression_fit,
     plot_loss_curve,
     plot_loss_curve_zoom,
+    plot_model_agreement,
     plot_regression_fit,
 )
 from ml_from_scratch.preprocessing import normalize_features
@@ -92,5 +93,23 @@ def test_plot_regression_fit_can_plot_original_x_with_normalized_model_input() -
 
     assert line.get_xdata().tolist() == [0.0, 10.0, 20.0]
     assert np.allclose(line.get_ydata(), model.predict(X_normalized))
+
+    plt.close(ax.figure)
+
+
+def test_plot_model_agreement_draws_reference_diagonal() -> None:
+    ax = plot_model_agreement(
+        np.array([1.0, 2.0, 3.0]),
+        np.array([1.1, 1.9, 3.0]),
+        title="Agreement",
+        value_label="probability",
+    )
+    diagonal = ax.lines[0]
+
+    assert diagonal.get_xdata().tolist() == pytest.approx([1.0, 3.0])
+    assert diagonal.get_ydata().tolist() == pytest.approx([1.0, 3.0])
+    assert ax.get_xlabel() == "scikit-learn probability"
+    assert ax.get_ylabel() == "from-scratch probability"
+    assert ax.get_title() == "Agreement"
 
     plt.close(ax.figure)

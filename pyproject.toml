@@ -12,6 +12,7 @@ version = "0.1.0"
 description = "Educational machine learning algorithms implemented from scratch."
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
 authors = [{ name = "Pasquale Marzaioli" }]
 dependencies = [
     "numpy==2.4.6",

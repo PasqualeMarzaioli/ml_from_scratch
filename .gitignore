@@ -2,6 +2,7 @@
 # It keeps source files and intentional outputs visible in version control.
 # Author: Pasquale Marzaioli
 
+.DS_Store
 .cache/
 .matplotlib/
 .pytest_cache/
@@ -15,4 +16,9 @@ build/
 coverage.xml
 dist/
 htmlcov/
-plots/
+plots/*
+!plots/
+!plots/linear_regression_fit.png
+!plots/polynomial_regression_fit.png
+!plots/logistic_regression_fit.png
+!plots/sklearn_comparison.png

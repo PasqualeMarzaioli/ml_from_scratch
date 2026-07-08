@@ -3,8 +3,35 @@
 # Author: Pasquale Marzaioli
 
 import numpy as np
+import pytest
 
-from ml_from_scratch.preprocessing import train_test_split
+from ml_from_scratch.preprocessing import normalize_features, train_test_split
+
+
+def test_normalize_features_returns_zero_mean_unit_std_columns() -> None:
+    X = np.array([[1.0, 10.0], [2.0, 20.0], [3.0, 30.0]])
+
+    X_normalized, means, scales = normalize_features(X)
+
+    assert np.allclose(means, np.array([2.0, 20.0]))
+    assert np.allclose(scales, np.std(X, axis=0))
+    assert np.allclose(np.mean(X_normalized, axis=0), np.array([0.0, 0.0]))
+    assert np.allclose(np.std(X_normalized, axis=0), np.array([1.0, 1.0]))
+
+
+def test_normalize_features_handles_constant_columns() -> None:
+    X = np.array([[1.0, 5.0], [2.0, 5.0], [3.0, 5.0]])
+
+    X_normalized, means, scales = normalize_features(X)
+
+    assert np.allclose(means, np.array([2.0, 5.0]))
+    assert np.allclose(scales, np.array([np.std(X[:, 0]), 1.0]))
+    assert np.allclose(X_normalized[:, 1], np.array([0.0, 0.0, 0.0]))
+
+
+def test_normalize_features_rejects_non_matrix_input() -> None:
+    with pytest.raises(ValueError, match="n_samples"):
+        normalize_features(np.array([1.0, 2.0, 3.0]))
 
 
 def test_train_test_split_returns_expected_sizes() -> None:

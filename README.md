@@ -69,6 +69,20 @@ b = b - learning_rate * dL/db
 The `learning_rate` controls the step size. Too small learns slowly. Too large
 can overshoot the best line.
 
+## Feature Normalization
+
+Gradient descent is easier to tune when features use similar scales. This
+package normalizes each feature column with:
+
+```text
+X_normalized = (X - mean) / standard_deviation
+```
+
+After normalization, each non-constant feature has mean `0` and standard
+deviation `1`. Constant features are converted to zeros because their standard
+deviation is `0`. Reuse the returned means and scales to transform future data
+with the same formula.
+
 ## Install
 
 ```bash
@@ -101,20 +115,22 @@ This saves:
 import numpy as np
 
 from ml_from_scratch import LinearRegressionGD
+from ml_from_scratch.preprocessing import normalize_features
 
 X = np.array([[0.0], [1.0], [2.0]])
 y = np.array([1.0, 3.0, 5.0])
 
-model = LinearRegressionGD(learning_rate=0.1, n_iterations=100)
-model.fit(X, y)
+X_normalized, means, scales = normalize_features(X)
 
-predictions = model.predict(X)
+model = LinearRegressionGD(learning_rate=0.1, n_iterations=100)
+model.fit(X_normalized, y)
+
+predictions = model.predict(X_normalized)
 ```
 
 ## What This Project Does Not Cover Yet
 
 - polynomial regression
 - logistic regression
-- feature normalization
 - classification metrics
 - scikit-learn comparison scripts

@@ -5,6 +5,31 @@
 import numpy as np
 
 
+def normalize_features(X: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Scale each feature to zero mean and unit standard deviation.
+
+    Args:
+        X: Feature matrix with shape (n_samples, n_features).
+
+    Returns:
+        A tuple containing:
+            X_normalized with shape (n_samples, n_features).
+            feature means with shape (n_features,).
+            feature scales with shape (n_features,).
+    """
+    X = np.asarray(X, dtype=float)
+
+    if X.ndim != 2:
+        raise ValueError("X must have shape (n_samples, n_features).")
+
+    means = np.mean(X, axis=0)
+    scales = np.std(X, axis=0)
+
+    # Constant features cannot be divided by zero, so they become all zeros.
+    scales = np.where(scales == 0, 1.0, scales)
+    return (X - means) / scales, means, scales
+
+
 def train_test_split(
     X: np.ndarray,
     y: np.ndarray,

@@ -9,7 +9,7 @@ Author: Pasquale Marzaioli
 machine learning by implementing the core ideas directly with NumPy.
 
 This first version implements linear regression trained with batch gradient
-descent.
+descent, plus polynomial feature expansion for curved one-feature examples.
 
 ## What Linear Regression Learns
 
@@ -29,6 +29,27 @@ y_hat = X @ w + b
 
 The model starts with weights set to zero and improves them one gradient descent
 step at a time.
+
+## Polynomial Regression
+
+Polynomial regression fits a curve by adding powers of an input feature before
+training the same linear regression model.
+
+For one input feature `x` and degree `3`, the expanded features are:
+
+```text
+[x, x^2, x^3]
+```
+
+The prediction formula becomes:
+
+```text
+y_hat = b + w1*x + w2*x^2 + w3*x^3
+```
+
+This is still linear in the learned parameters because the model learns the
+weights `w1`, `w2`, `w3`, and the bias `b`. The powers of `x` are fixed input
+features created before training, not learned parameters.
 
 ## Loss Function
 
@@ -101,6 +122,7 @@ pytest
 
 ```bash
 python scripts/train_linear.py
+python scripts/train_polynomial.py
 ```
 
 This saves:
@@ -108,6 +130,9 @@ This saves:
 - `plots/linear_regression_fit.png`
 - `plots/linear_regression_loss.png`
 - `plots/linear_regression_loss_zoom.png`
+- `plots/polynomial_regression_fit.png`
+- `plots/polynomial_regression_loss.png`
+- `plots/polynomial_regression_loss_zoom.png`
 
 ## Public API
 
@@ -115,13 +140,20 @@ This saves:
 import numpy as np
 
 from ml_from_scratch import LinearRegressionGD
-from ml_from_scratch.preprocessing import normalize_features, transform_features
+from ml_from_scratch.preprocessing import (
+    normalize_features,
+    polynomial_features,
+    transform_features,
+)
 
 X = np.array([[0.0], [1.0], [2.0]])
 y = np.array([1.0, 3.0, 5.0])
 
-X_normalized, means, scales = normalize_features(X)
-new_X_normalized = transform_features(np.array([[3.0]]), means, scales)
+X_polynomial = polynomial_features(X, degree=2)
+X_normalized, means, scales = normalize_features(X_polynomial)
+
+new_X = polynomial_features(np.array([[3.0]]), degree=2)
+new_X_normalized = transform_features(new_X, means, scales)
 
 model = LinearRegressionGD(learning_rate=0.1, n_iterations=100)
 model.fit(X_normalized, y)
@@ -131,7 +163,6 @@ predictions = model.predict(new_X_normalized)
 
 ## What This Project Does Not Cover Yet
 
-- polynomial regression
 - logistic regression
 - classification metrics
 - scikit-learn comparison scripts

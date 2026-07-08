@@ -7,9 +7,57 @@ import pytest
 
 from ml_from_scratch.preprocessing import (
     normalize_features,
+    polynomial_features,
     train_test_split,
     transform_features,
 )
+
+
+def test_polynomial_features_returns_expected_shape() -> None:
+    X = np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+
+    X_polynomial = polynomial_features(X, degree=3)
+
+    assert X_polynomial.shape == (3, 6)
+
+
+def test_polynomial_features_matches_known_values() -> None:
+    X = np.array([[2.0], [3.0]])
+
+    X_polynomial = polynomial_features(X, degree=4)
+
+    assert np.array_equal(
+        X_polynomial,
+        np.array(
+            [
+                [2.0, 4.0, 8.0, 16.0],
+                [3.0, 9.0, 27.0, 81.0],
+            ],
+        ),
+    )
+
+
+def test_polynomial_features_matches_known_multi_column_values() -> None:
+    X = np.array([[2.0, 3.0]])
+
+    X_polynomial = polynomial_features(X, degree=3)
+
+    assert np.array_equal(
+        X_polynomial,
+        np.array([[2.0, 3.0, 4.0, 9.0, 8.0, 27.0]]),
+    )
+
+
+@pytest.mark.parametrize("degree", [0, -1])
+def test_polynomial_features_rejects_non_positive_degrees(degree: int) -> None:
+    with pytest.raises(ValueError, match="at least 1"):
+        polynomial_features(np.array([[1.0]]), degree=degree)
+
+
+@pytest.mark.parametrize("degree", [1.5, True])
+def test_polynomial_features_rejects_non_integer_degrees(degree: object) -> None:
+    with pytest.raises(TypeError, match="positive integer"):
+        polynomial_features(np.array([[1.0]]), degree=degree)
 
 
 def test_normalize_features_returns_zero_mean_unit_std_columns() -> None:

@@ -5,6 +5,29 @@
 import numpy as np
 
 
+def polynomial_features(X: np.ndarray, degree: int) -> np.ndarray:
+    """Expand each feature column into polynomial powers.
+
+    Args:
+        X: Feature matrix with shape (n_samples, n_features).
+        degree: Highest polynomial power to include.
+
+    Returns:
+        Expanded feature matrix with shape (n_samples, n_features * degree).
+    """
+    X = np.asarray(X, dtype=float)
+
+    if X.ndim != 2:
+        raise ValueError("X must have shape (n_samples, n_features).")
+    if isinstance(degree, bool) or not isinstance(degree, int):
+        raise TypeError("degree must be a positive integer.")
+    if degree < 1:
+        raise ValueError("degree must be at least 1.")
+
+    # Keep the original columns first, then add squared, cubed, and higher powers.
+    return np.concatenate([X**power for power in range(1, degree + 1)], axis=1)
+
+
 def normalize_features(X: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Scale each feature to zero mean and unit standard deviation.
 

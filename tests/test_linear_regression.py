@@ -6,6 +6,8 @@ import numpy as np
 import pytest
 
 from ml_from_scratch.linear_regression import LinearRegressionGD
+from ml_from_scratch.metrics import mean_squared_error
+from ml_from_scratch.preprocessing import polynomial_features
 
 
 def test_predict_returns_one_value_per_sample() -> None:
@@ -49,3 +51,14 @@ def test_model_learns_simple_line() -> None:
 
     assert model.weights_[0] == pytest.approx(3.0, abs=0.01)
     assert model.bias_ == pytest.approx(-2.0, abs=0.01)
+
+
+def test_model_learns_simple_quadratic_with_polynomial_features() -> None:
+    X = np.linspace(-1, 1, 80).reshape(-1, 1)
+    y = 1 - 2 * X[:, 0] + 0.5 * X[:, 0] ** 2
+
+    X_polynomial = polynomial_features(X, degree=2)
+    model = LinearRegressionGD(learning_rate=0.1, n_iterations=1500)
+    model.fit(X_polynomial, y)
+
+    assert mean_squared_error(y, model.predict(X_polynomial)) < 1e-4

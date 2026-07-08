@@ -1,5 +1,5 @@
 # train_logistic.py — Trains logistic regression and saves example plots.
-# It demonstrates train/test splitting, normalization, accuracy, and probability curves.
+# It demonstrates splitting, normalization, classification metrics, and curves.
 # Author: Pasquale Marzaioli
 
 import os
@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from ml_from_scratch.logistic_regression import LogisticRegressionGD
+from ml_from_scratch.metrics import f1_score, precision_score, recall_score
 from ml_from_scratch.preprocessing import (
     normalize_features,
     train_test_split,
@@ -16,7 +17,7 @@ from ml_from_scratch.preprocessing import (
 
 
 def main() -> None:
-    """Train the classifier, save plots, and print a compact accuracy summary."""
+    """Train the classifier, save plots, and print a compact metric summary."""
     os.environ.setdefault("MPLBACKEND", "Agg")
     os.environ.setdefault("MPLCONFIGDIR", str(Path(".matplotlib").resolve()))
     os.environ.setdefault("XDG_CACHE_HOME", str(Path(".cache").resolve()))
@@ -73,9 +74,14 @@ def main() -> None:
     )
     plt.close(loss_ax.figure)
 
+    test_predictions = model.predict(X_test_normalized)
+
     print(f"final loss: {model.loss_history_[-1]:.3f}")
     print(f"train accuracy: {model.score(X_train_normalized, y_train):.3f}")
     print(f"test accuracy: {model.score(X_test_normalized, y_test):.3f}")
+    print(f"test precision: {precision_score(y_test, test_predictions):.3f}")
+    print(f"test recall: {recall_score(y_test, test_predictions):.3f}")
+    print(f"test F1: {f1_score(y_test, test_predictions):.3f}")
     print(f"saved plots to: {output_dir}")
 
 

@@ -5,7 +5,11 @@
 import numpy as np
 import pytest
 
-from ml_from_scratch.logistic_regression import LogisticRegressionGD, sigmoid
+from ml_from_scratch.logistic_regression import (
+    LogisticRegressionGD,
+    binary_cross_entropy_loss,
+    sigmoid,
+)
 
 
 def test_sigmoid_matches_known_values() -> None:
@@ -15,6 +19,15 @@ def test_sigmoid_matches_known_values() -> None:
 
     assert probabilities == pytest.approx(
         np.array([0.26894142, 0.5, 0.73105858]),
+    )
+
+
+def test_binary_cross_entropy_loss_matches_known_value() -> None:
+    y_true = np.array([1, 0])
+    y_probability = np.array([0.5, 0.5])
+
+    assert binary_cross_entropy_loss(y_true, y_probability) == pytest.approx(
+        np.log(2),
     )
 
 

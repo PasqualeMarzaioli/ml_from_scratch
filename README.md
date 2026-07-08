@@ -92,6 +92,24 @@ b = b - learning_rate * dL/db
 After training, predicted probabilities become class labels with a fixed
 threshold: `p >= 0.5` gives class `1`, otherwise class `0`.
 
+## Classification Metrics
+
+Binary classification metrics compare true labels and predicted labels, where
+class `1` is treated as the positive class.
+
+- True positive (`TP`): the true label is `1` and the prediction is `1`.
+- False positive (`FP`): the true label is `0` but the prediction is `1`.
+- False negative (`FN`): the true label is `1` but the prediction is `0`.
+- Accuracy: correct predictions divided by all predictions.
+- Precision: `TP / (TP + FP)`, so it answers: when the model predicts `1`, how
+  often is it right?
+- Recall: `TP / (TP + FN)`, so it answers: out of the real `1` labels, how many
+  did the model find?
+- F1: `2 * precision * recall / (precision + recall)`, a single score that is
+  high only when both precision and recall are high.
+
+When a denominator is zero, these metric functions return `0.0`.
+
 ## Loss Function
 
 The loss tells the model how wrong its predictions are. This package uses mean
@@ -179,14 +197,21 @@ The example scripts save:
 - `plots/logistic_regression_loss.png`
 
 The logistic script also prints final binary cross-entropy loss, train accuracy,
-and test accuracy.
+test accuracy, test precision, test recall, and test F1.
 
 ## Public API
 
 ```python
 import numpy as np
 
-from ml_from_scratch import LinearRegressionGD, LogisticRegressionGD
+from ml_from_scratch import (
+    LinearRegressionGD,
+    LogisticRegressionGD,
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from ml_from_scratch.preprocessing import (
     normalize_features,
     polynomial_features,
@@ -215,10 +240,14 @@ classifier.fit(classifier_X, classifier_y)
 
 probabilities = classifier.predict_proba(classifier_X)
 labels = classifier.predict(classifier_X)
+accuracy = accuracy_score(classifier_y, labels)
+precision = precision_score(classifier_y, labels)
+recall = recall_score(classifier_y, labels)
+f1 = f1_score(classifier_y, labels)
 ```
 
 ## What This Project Does Not Cover Yet
 
-- classification metrics beyond accuracy
 - multi-class classification
+- advanced classification metrics such as ROC curves
 - scikit-learn comparison scripts

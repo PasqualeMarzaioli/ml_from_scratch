@@ -4,6 +4,8 @@
 
 import numpy as np
 
+from ml_from_scratch.metrics import accuracy_score
+
 
 def sigmoid(z: np.ndarray) -> np.ndarray:
     """Map raw scores to probabilities with the logistic sigmoid.
@@ -147,18 +149,8 @@ class LogisticRegressionGD:
         Returns:
             Fraction of labels predicted correctly.
         """
-        y = np.asarray(y, dtype=float)
-
-        if y.ndim != 1:
-            raise ValueError("y must have shape (n_samples,).")
-        if np.any((y != 0) & (y != 1)):
-            raise ValueError("y must contain only 0 and 1.")
-
         predictions = self.predict(X)
-        if y.shape != predictions.shape:
-            raise ValueError("X and y must contain the same number of samples.")
-
-        return float(np.mean(predictions == y))
+        return accuracy_score(y, predictions)
 
     @staticmethod
     def _validate_training_data(X: np.ndarray, y: np.ndarray) -> None:

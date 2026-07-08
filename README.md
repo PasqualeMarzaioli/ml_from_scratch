@@ -8,8 +8,9 @@ Author: Pasquale Marzaioli
 `ml_from_scratch` is a small educational Python package for learning supervised
 machine learning by implementing the core ideas directly with NumPy.
 
-This first version implements linear regression trained with batch gradient
-descent, plus polynomial feature expansion for curved one-feature examples.
+This version implements linear regression and logistic regression trained with
+batch gradient descent, plus polynomial feature expansion for curved
+one-feature examples.
 
 ## What Linear Regression Learns
 
@@ -50,6 +51,46 @@ y_hat = b + w1*x + w2*x^2 + w3*x^3
 This is still linear in the learned parameters because the model learns the
 weights `w1`, `w2`, `w3`, and the bias `b`. The powers of `x` are fixed input
 features created before training, not learned parameters.
+
+## Logistic Regression
+
+Logistic regression classifies each row into one of two classes: `0` or `1`.
+It first computes a raw score with the same linear formula used by linear
+regression:
+
+```text
+z = X @ w + b
+```
+
+Then it converts that score into a probability with the sigmoid function:
+
+```text
+p = sigmoid(z) = 1 / (1 + exp(-z))
+```
+
+The loss is binary cross-entropy:
+
+```text
+loss = -mean(y * log(p) + (1 - y) * log(1 - p))
+```
+
+For `n` samples, the gradients are:
+
+```text
+errors = p - y
+dL/dw = (1 / n) * X.T @ errors
+dL/db = (1 / n) * sum(errors)
+```
+
+Gradient descent uses the same update rule as linear regression:
+
+```text
+w = w - learning_rate * dL/dw
+b = b - learning_rate * dL/db
+```
+
+After training, predicted probabilities become class labels with a fixed
+threshold: `p >= 0.5` gives class `1`, otherwise class `0`.
 
 ## Loss Function
 
@@ -118,14 +159,15 @@ pip install -e ".[dev]"
 pytest
 ```
 
-## Generate Example Plots
+## Run Example Scripts
 
 ```bash
 python scripts/train_linear.py
 python scripts/train_polynomial.py
+python scripts/train_logistic.py
 ```
 
-This saves:
+The example scripts save:
 
 - `plots/linear_regression_fit.png`
 - `plots/linear_regression_loss.png`
@@ -133,13 +175,18 @@ This saves:
 - `plots/polynomial_regression_fit.png`
 - `plots/polynomial_regression_loss.png`
 - `plots/polynomial_regression_loss_zoom.png`
+- `plots/logistic_regression_fit.png`
+- `plots/logistic_regression_loss.png`
+
+The logistic script also prints final binary cross-entropy loss, train accuracy,
+and test accuracy.
 
 ## Public API
 
 ```python
 import numpy as np
 
-from ml_from_scratch import LinearRegressionGD
+from ml_from_scratch import LinearRegressionGD, LogisticRegressionGD
 from ml_from_scratch.preprocessing import (
     normalize_features,
     polynomial_features,
@@ -159,10 +206,19 @@ model = LinearRegressionGD(learning_rate=0.1, n_iterations=100)
 model.fit(X_normalized, y)
 
 predictions = model.predict(new_X_normalized)
+
+classifier_X = np.array([[-2.0], [-1.0], [1.0], [2.0]])
+classifier_y = np.array([0, 0, 1, 1])
+
+classifier = LogisticRegressionGD(learning_rate=0.5, n_iterations=300)
+classifier.fit(classifier_X, classifier_y)
+
+probabilities = classifier.predict_proba(classifier_X)
+labels = classifier.predict(classifier_X)
 ```
 
 ## What This Project Does Not Cover Yet
 
-- logistic regression
-- classification metrics
+- classification metrics beyond accuracy
+- multi-class classification
 - scikit-learn comparison scripts

@@ -1,8 +1,13 @@
 # __init__.py — Exposes the public package API.
-# It imports only the first educational building blocks implemented so far.
+# It imports only the educational building blocks implemented so far.
 # Author: Pasquale Marzaioli
 
 from ml_from_scratch.linear_regression import LinearRegressionGD
+from ml_from_scratch.logistic_regression import (
+    LogisticRegressionGD,
+    binary_cross_entropy_loss,
+    sigmoid,
+)
 from ml_from_scratch.metrics import mean_squared_error
 from ml_from_scratch.preprocessing import (
     normalize_features,
@@ -13,9 +18,12 @@ from ml_from_scratch.preprocessing import (
 
 __all__ = [
     "LinearRegressionGD",
+    "LogisticRegressionGD",
+    "binary_cross_entropy_loss",
     "mean_squared_error",
     "normalize_features",
     "polynomial_features",
+    "sigmoid",
     "train_test_split",
     "transform_features",
 ]

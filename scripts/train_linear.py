@@ -71,7 +71,7 @@ def main() -> None:
         bbox_inches="tight",
     )
 
-    zoom_ax = plot_loss_curve_zoom(model.loss_history_, skip_first=5)
+    zoom_ax = plot_loss_curve_zoom(model.loss_history_, skip_first=175)
     zoom_ax.figure.savefig(
         output_dir / "linear_regression_loss_zoom.png",
         dpi=150,

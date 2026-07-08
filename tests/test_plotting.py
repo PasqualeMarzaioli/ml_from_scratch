@@ -12,6 +12,8 @@ import pytest
 
 from ml_from_scratch.linear_regression import LinearRegressionGD
 from ml_from_scratch.plotting import (
+    plot_binary_cross_entropy_curve,
+    plot_logistic_regression_fit,
     plot_loss_curve,
     plot_loss_curve_zoom,
     plot_regression_fit,
@@ -32,6 +34,16 @@ def test_plot_loss_curve_rejects_non_positive_values() -> None:
         plot_loss_curve([1.0, 0.0])
 
 
+def test_plot_binary_cross_entropy_curve_labels_classification_loss() -> None:
+    ax = plot_binary_cross_entropy_curve([0.8, 0.4, 0.2])
+
+    assert ax.get_yscale() == "log"
+    assert ax.get_ylabel() == "binary cross-entropy (log scale)"
+    assert ax.get_title() == "Logistic regression training loss"
+
+    plt.close(ax.figure)
+
+
 def test_plot_loss_curve_zoom_skips_first_iterations() -> None:
     ax = plot_loss_curve_zoom([10.0, 5.0, 2.0, 1.0], skip_first=2)
 
@@ -47,6 +59,24 @@ def test_plot_loss_curve_zoom_skips_first_iterations() -> None:
 def test_plot_loss_curve_zoom_requires_remaining_values() -> None:
     with pytest.raises(ValueError, match="leave at least one"):
         plot_loss_curve_zoom([1.0, 0.5], skip_first=2)
+
+
+def test_plot_logistic_regression_fit_draws_probability_curve() -> None:
+    X = np.array([[-1.0], [1.0]])
+    y = np.array([0, 1])
+    probability_X = np.array([[1.0], [-1.0], [0.0]])
+    probabilities = np.array([0.8, 0.2, 0.5])
+
+    ax = plot_logistic_regression_fit(X, y, probability_X, probabilities)
+    probability_line = ax.lines[0]
+    threshold_line = ax.lines[1]
+
+    assert probability_line.get_xdata().tolist() == [-1.0, 0.0, 1.0]
+    assert probability_line.get_ydata().tolist() == [0.2, 0.5, 0.8]
+    assert list(threshold_line.get_ydata()) == [0.5, 0.5]
+    assert ax.get_ylabel() == "probability"
+
+    plt.close(ax.figure)
 
 
 def test_plot_regression_fit_can_plot_original_x_with_normalized_model_input() -> None:
